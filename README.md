@@ -21,7 +21,7 @@ navegador.
 ```text
 punto_4/
 ├── client/                 # Interfaz React + JSX + Vite
-├── server/                 # API REST en Express y perfiles locales
+├── server/                 # API REST en Express y acceso a SQLite
 ├── package.json            # Scripts y dependencias del monorepo
 └── README.md
 ```
@@ -35,10 +35,18 @@ archivos estáticos como la API desde el mismo puerto.
 
 El registro solicita nombre, correo y contraseña. Express almacena perfiles,
 intereses y libros favoritos en la base de datos SQLite
-`server/data/users.sqlite`, que está excluida de Git. Si existe el archivo
-anterior `server/data/users.json`, sus datos se importan automáticamente una
-sola vez y el archivo original se conserva como respaldo. Las contraseñas se
-almacenan como hashes `scrypt`, no como texto. La sesión usa una cookie
+`server/data/users.sqlite`. En la primera ejecución, el servidor crea
+automáticamente el directorio, el archivo y las tablas necesarias; no hay que
+instalar ni configurar un servidor de base de datos. Cada instalación empieza
+con una base vacía y cada persona puede crear su propia cuenta.
+
+El archivo de la base de datos, la clave de sesión y los perfiles locales están
+excluidos de Git para no publicar cuentas ni datos privados. Por ello, al clonar
+el repositorio se obtiene el código que crea la base, no las cuentas guardadas
+en la computadora de otra persona. Si existe localmente el archivo anterior
+`server/data/users.json`, sus datos se importan automáticamente una sola vez y
+el archivo original se conserva como respaldo. Las contraseñas se almacenan
+como hashes `scrypt`, no como texto. La sesión usa una cookie
 firmada `HttpOnly` y `SameSite=Lax`; la clave local también se guarda dentro de
 `server/data/`. Las preferencias y libros favoritos se asocian a la cuenta y
 se conservan al reiniciar el servidor local.
@@ -95,9 +103,10 @@ npm install
 npm run dev
 ```
 
-Abre la dirección que Vite indique, normalmente `http://localhost:5173/`.
-Express inicia en `http://localhost:3001/`; la ruta de salud está en
-`http://localhost:3001/api/health`.
+Abre `http://localhost:5173/` y selecciona **Crear cuenta**. Vite inicia el
+frontend y Express inicia la API en `http://localhost:3001/`; la ruta de salud
+está en `http://localhost:3001/api/health`. La base SQLite se crea al iniciar
+Express.
 
 Para validar y ejecutar el build integrado:
 
